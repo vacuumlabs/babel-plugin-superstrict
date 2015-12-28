@@ -22,5 +22,5 @@ function test(fixtureName) {
 }
 
 [
-
+  'const_array_index'
 ].map(test);
