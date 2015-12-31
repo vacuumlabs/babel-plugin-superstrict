@@ -20,14 +20,32 @@ export default function ({ types: t }) {
           MemberExpression(path) {
             // ignore MemberExpression when it is on left side of
             // AssignmentExpression
-            if (path.parent.type == 'AssignmentExpression' &&
-                path.parent.left == path.node) {
+            if (t.isAssignmentExpression(path.parent) &&
+                path.parent.left === path.node) {
               return;
             }
 
-            statementPath.insertBefore(
-              createPropertyAssert(t, path.node.object, path.node.property)
-            );
+            // if property is constant (literal or identifier)
+            // just assert it before ExpressionStatement
+            if (t.isLiteral(path.node.property) ||
+                t.isIdentifier(path.node.property)) {
+              statementPath.insertBefore(
+                createPropertyAssert(t, path.node.object, path.node.property)
+              );
+            }
+            // else property is expression and we have to avoid evaluating
+            // it twice so we ...
+            else {
+              // ... precalculate index to temporary variable ...
+              const id = path.scope.generateUidIdentifier("index");
+              statementPath.scope.push({ id, init: path.node.property });
+              // ..assert it before expressionStatement ...
+              statementPath.insertBefore(
+                createPropertyAssert(t, path.node.object, id)
+              );
+              // ... and replace original property with this variable
+              path.node.property = id;
+            }
           }
         });
       }
