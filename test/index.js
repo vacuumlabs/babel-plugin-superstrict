@@ -23,5 +23,6 @@ function test(fixtureName) {
 
 [
   'const_array_index',
-  'ignore_left_side_of_assignment'
+  'ignore_left_side_of_assignment',
+  'const_object_property'
 ].map(test);
