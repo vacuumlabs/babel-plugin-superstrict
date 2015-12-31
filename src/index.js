@@ -18,6 +18,13 @@ export default function ({ types: t }) {
       ExpressionStatement(statementPath) {
         statementPath.traverse({
           MemberExpression(path) {
+            // ignore MemberExpression when it is on left side of
+            // AssignmentExpression
+            if (path.parent.type == 'AssignmentExpression' &&
+                path.parent.left == path.node) {
+              return;
+            }
+
             statementPath.insertBefore(
               createPropertyAssert(t, path.node.object, path.node.property)
             );
