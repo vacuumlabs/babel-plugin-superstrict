@@ -15,7 +15,7 @@ function createPropertyAssert(t, object, property) {
 export default function ({ types: t }) {
   return {
     visitor: {
-      ExpressionStatement(statementPath) {
+      Statement(statementPath) {
         statementPath.traverse({
           MemberExpression(path) {
             // ignore MemberExpression when it is on left side of
