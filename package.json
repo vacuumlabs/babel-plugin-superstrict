@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "build": "babel src -d lib",
-    "test": "npm run build && mocha --reporter tap",
+    "test": "npm run build && mocha --compilers js:babel-register --reporter nyan test/**",
     "prepublish": "npm run clean && npm run build"
   },
   "repository": {
