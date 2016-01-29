@@ -11,6 +11,8 @@ module.exports = () => {
   Object.prototype[Symbol.for('safeGetItem')] = function(property) {
     if (!(property in this)) {
       throw new NonExistingPropertyException(this, property);
+    } else {
+      return this[property];
     }
   };
 
