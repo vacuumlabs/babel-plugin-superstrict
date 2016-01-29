@@ -26,11 +26,15 @@ function generateRequire() {
 
 // object[Symbol.for('safeGetItem/safeGetAttr')]('property');
 function generateSafeGetCall(object, property, computed) {
+
   let functionName;
+  let propertyNode;
   if (computed) {
     functionName = 'safeGetAttr';
+    propertyNode = property;
   } else {
     functionName = 'safeGetItem';
+    propertyNode = t.stringLiteral(property.name);
   }
 
   return t.expressionStatement(
@@ -50,7 +54,7 @@ function generateSafeGetCall(object, property, computed) {
         true
       ),
       [
-        t.stringLiteral(property.name)
+        propertyNode
       ]
     )
   );
@@ -65,8 +69,14 @@ export default function() {
           ...path.node.body
         ];
       },
+      // ignore left sides of assignments
+      AssignmentExpression(path) {
+        path.node.left[ignoredNode] = true;
+      },
       MemberExpression(path) {
-        if (!path.node[ignoredNode]) {
+        if (path.node[ignoredNode]) {
+          path.skip();
+        } else {
           path.replaceWith(generateSafeGetCall(path.node.object,
                                                path.node.property,
                                                path.node.computed));
