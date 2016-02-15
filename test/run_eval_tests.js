@@ -13,4 +13,4 @@ function test(source) {
   });
 }
 
-['basic', 'array', 'getters_setters', 'left_side_of_assignment'].map(test);
+['basic', 'array', 'getters_setters', 'left_side_of_assignment', 'detect_directive'].map(test);

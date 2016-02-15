@@ -68,6 +68,20 @@ export default function() {
           generateRequire(),
           ...path.node.body
         ];
+
+        let foundDirective = false;
+        path.traverse({
+          DirectiveLiteral(path) {
+            if (path.node.value === 'use superstrict') {
+              foundDirective = true;
+            }
+          }
+        });
+
+        // don't perform any transformation when directive is not found
+        if (!foundDirective) {
+          path.skip();
+        }
       },
       // ignore left sides of assignments
       AssignmentExpression(path) {
