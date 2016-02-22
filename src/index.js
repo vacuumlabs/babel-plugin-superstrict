@@ -10,13 +10,13 @@ function getIgnoredMemberExpression(object, property, computed) {
 }
 
 // require('../lib/safe_get.js')();
-function generateRequire() {
+function generateRequire(safeGetFilePath) {
   return t.expressionStatement(
     t.callExpression(
       t.callExpression(
         t.identifier('require'),
         [
-          t.stringLiteral('../lib/safe_get.js')
+          t.stringLiteral(safeGetFilePath)
         ]
       ),
       []
@@ -63,9 +63,9 @@ function generateSafeGetCall(object, property, computed) {
 export default function() {
   return {
     visitor: {
-      Program(path) {
+      Program(path, {opts}) {
         path.node.body = [
-          generateRequire(),
+          generateRequire(opts['safeGetFilePath']),
           ...path.node.body
         ];
 
