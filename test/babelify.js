@@ -6,7 +6,8 @@ export default function babelify(sourceFileName) {
     presets: ['es2015'],
     plugins: [
       ['../lib', {
-        'safeGetFilePath': '../lib/safe_get.js'
+        'safeGetFilePath': '../lib/safe_get.js',
+        'directivePolicy': 'opt in'
       }]
     ]
   }).code;

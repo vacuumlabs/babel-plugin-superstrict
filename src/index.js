@@ -64,23 +64,35 @@ export default function() {
   return {
     visitor: {
       Program(path, {opts}) {
-        path.node.body = [
-          generateRequire(opts['safeGetFilePath']),
-          ...path.node.body
-        ];
+        let directivePolicy = opts['directivePolicy'];
+        if (!directivePolicy) {
+          directivePolicy = 'opt in'; // default policy
+        }
 
-        let foundDirective = false;
+        let foundPositiveDirective = false;
+        let foundNegativeDirective = false;
         path.traverse({
           DirectiveLiteral(path) {
             if (path.node.value === 'use superstrict') {
-              foundDirective = true;
+              foundPositiveDirective = true;
+            } else if (path.node.value === 'use !superstrict') {
+              foundNegativeDirective = true;
             }
           }
         });
 
-        // don't perform any transformation when directive is not found
-        if (!foundDirective) {
+        // 'opt in' transpiles only files with positive directive
+        if ((directivePolicy === 'opt in') && (!foundPositiveDirective)) {
           path.skip();
+        // 'opt out' transpiles all files except those with negative directive
+        } else if ((directivePolicy === 'opt out') && (foundNegativeDirective)) {
+          path.skip();
+        // in other cases or with 'everything' policy transpile file
+        } else {
+          path.node.body = [
+            generateRequire(opts['safeGetFilePath']),
+            ...path.node.body
+          ];
         }
       },
       // ignore left sides of assignments
