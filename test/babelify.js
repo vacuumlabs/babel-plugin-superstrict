@@ -5,7 +5,7 @@ export default function babelify(sourceFileName) {
     babelrc: false,
     presets: ['es2015'],
     plugins: [
-      ['../lib', {
+      ['../../lib', {
         'safeGetFilePath': '../lib/safe_get.js',
         'directivePolicy': 'opt in'
       }]
