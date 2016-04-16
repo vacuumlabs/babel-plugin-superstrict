@@ -60,6 +60,16 @@ function generateSafeGetCall(object, property, computed) {
   );
 };
 
+function splitMultipleDirectives(directive) {
+  if (!directive.startsWith('use ')) {
+    return [];
+  }
+
+  return directive.slice(4) // ommit 'use '
+                  .split(', ')
+                  .map((directive) => directive.trim());
+}
+
 export default function() {
   return {
     visitor: {
@@ -73,10 +83,13 @@ export default function() {
         let foundNegativeDirective = false;
         path.traverse({
           DirectiveLiteral(path) {
-            if (path.node.value === 'use superstrict') {
-              foundPositiveDirective = true;
-            } else if (path.node.value === 'use !superstrict') {
-              foundNegativeDirective = true;
+            const directives = splitMultipleDirectives(path.node.value);
+            for (const directive of directives) {
+              if (directive === 'superstrict') {
+                foundPositiveDirective = true;
+              } else if (directive === '!superstrict') {
+                foundNegativeDirective = true;
+              }
             }
           }
         });
