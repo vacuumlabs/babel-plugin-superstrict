@@ -7,14 +7,12 @@ function NonExistingPropertyException(object, property) {
   };
 };
 
-module.exports = () => {
-  Object.prototype[Symbol.for('safeGetItem')] = function(property) {
-    if (!(property in this)) {
-      throw new NonExistingPropertyException(this, property);
-    } else {
-      return this[property];
-    }
-  };
-
-  Object.prototype[Symbol.for('safeGetAttr')] = Object[Symbol.for('safeGetItem')];
+exports.safeGetItem = (object, property) => {
+  if (!(property in object)) {
+    throw new NonExistingPropertyException(object, property);
+  } else {
+    return object[property];
+  }
 };
+
+exports.safeGetAttr = exports.safeGetItem;

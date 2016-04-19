@@ -9,24 +9,31 @@ function getIgnoredMemberExpression(object, property, computed) {
   return node;
 }
 
-// require('../lib/safe_get.js')();
-function generateRequire(safeGetFilePath) {
-  return t.expressionStatement(
-    t.callExpression(
-      t.callExpression(
-        t.identifier('require'),
-        [
-          t.stringLiteral(safeGetFilePath)
-        ]
-      ),
-      []
-    )
+// var safeGetItem = require('../lib/safe_get.js').safeGetItem;
+function generateRequire(method, safeGetFilePath) {
+  return t.variableDeclaration(
+    'var',
+    [
+      t.variableDeclarator(
+        t.identifier(method),
+        getIgnoredMemberExpression(
+          t.callExpression(
+            t.identifier('require'),
+            [
+              t.stringLiteral(safeGetFilePath)
+            ]
+          ),
+          t.identifier(method),
+          false
+        )
+      )
+    ]
   );
 };
 
-// object[Symbol.for('safeGetItem/safeGetAttr')]('property');
+// safeGetItem(object, 'property');
+// safeGetAttr(object, 'property');
 function generateSafeGetCall(object, property, computed) {
-
   let functionName;
   let propertyNode;
   if (computed) {
@@ -39,21 +46,9 @@ function generateSafeGetCall(object, property, computed) {
 
   return t.expressionStatement(
     t.callExpression(
-      getIgnoredMemberExpression(
-        object,
-        t.callExpression(
-          getIgnoredMemberExpression(
-            t.identifier('Symbol'),
-            t.identifier('for'),
-            false
-          ),
-          [
-            t.stringLiteral(functionName)
-          ]
-        ),
-        true
-      ),
+      t.identifier(functionName),
       [
+        object,
         propertyNode
       ]
     )
@@ -103,7 +98,8 @@ export default function() {
         // in other cases or with 'everything' policy transpile file
         } else {
           path.node.body = [
-            generateRequire(opts['safeGetFilePath']),
+            generateRequire('safeGetItem', opts['safeGetFilePath']),
+            generateRequire('safeGetAttr', opts['safeGetFilePath']),
             ...path.node.body
           ];
         }
