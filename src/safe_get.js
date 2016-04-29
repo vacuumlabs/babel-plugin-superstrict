@@ -8,12 +8,20 @@ function NonExistingPropertyException(object, property) {
 };
 
 exports.safeGetItem = (object, property) => {
+  let toReturn;
+
   if (property in object) {
-    return object[property];
+    toReturn = object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
-    return object[Symbol.for('safeGetAttr')](property);
+    toReturn = object[Symbol.for('safeGetAttr')](property);
   } else {
     throw new NonExistingPropertyException(object, property);
+  }
+
+  if (typeof toReturn === 'function') {
+    return toReturn.bind(object);
+  } else {
+    return toReturn;
   }
 };
 
