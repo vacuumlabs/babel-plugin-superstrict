@@ -66,8 +66,8 @@ function splitMultipleDirectives(directive) {
   }
 
   return directive.slice(4) // ommit 'use '
-                  .split(', ')
-                  .map((directive) => directive.trim());
+    .split(',')
+    .map((directive) => directive.trim());
 }
 
 export default function() {
@@ -81,18 +81,18 @@ export default function() {
 
         let foundPositiveDirective = false;
         let foundNegativeDirective = false;
-        path.traverse({
-          DirectiveLiteral(path) {
-            const directives = splitMultipleDirectives(path.node.value);
-            for (const directive of directives) {
-              if (directive === 'superstrict') {
-                foundPositiveDirective = true;
-              } else if (directive === '!superstrict') {
-                foundNegativeDirective = true;
-              }
+
+        for (const directiveNode of path.node.directives) {
+          const directiveString = directiveNode.value.value
+          const directives = splitMultipleDirectives(directiveString);
+          for (const directive of directives) {
+            if (directive === 'superstrict') {
+              foundPositiveDirective = true;
+            } else if (directive === '!superstrict') {
+              foundNegativeDirective = true;
             }
           }
-        });
+        }
 
         // 'opt in' transpiles only files with positive directive
         if ((directivePolicy === 'opt in') && (!foundPositiveDirective)) {
