@@ -14,4 +14,4 @@ function test(source) {
 }
 
 ['basic', 'array', 'getters_setters', 'left_side_of_assignment', 'detect_directive',
- 'flexible_directives'].map(test);
+ 'flexible_directives', 'safeGetAttr'].map(test);

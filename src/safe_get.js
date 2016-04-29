@@ -8,10 +8,12 @@ function NonExistingPropertyException(object, property) {
 };
 
 exports.safeGetItem = (object, property) => {
-  if (!(property in object)) {
-    throw new NonExistingPropertyException(object, property);
-  } else {
+  if (property in object) {
     return object[property];
+  } else if (Symbol.for('safeGetAttr') in object) {
+    return object[Symbol.for('safeGetAttr')](property);
+  } else {
+    throw new NonExistingPropertyException(object, property);
   }
 };
 
