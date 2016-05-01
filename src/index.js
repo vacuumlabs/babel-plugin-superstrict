@@ -104,13 +104,16 @@ export default function() {
         }
       },
       // transform map.get('a') to safeGetImmutableJs(map, 'a')
+      // do not transform if get has two arguments - second is default value
+      // used when key is not found
       CallExpression(path) {
         const memberExpression = path.node.callee; // map.get
         const property = path.node.arguments[0]; // 'a'
 
         if ((memberExpression.type === 'MemberExpression') &&
             (memberExpression.property.type === 'Identifier') &&
-            (memberExpression.property.name === 'get')) {
+            (memberExpression.property.name === 'get') &&
+            (path.node.arguments.length === 1)) {
           path.replaceWith(t.callExpression(
             t.identifier('safeGetImmutableJs'),
             [
