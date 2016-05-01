@@ -98,8 +98,26 @@ export default function() {
           path.node.body = [
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
+            generateRequire('safeGetImmutableJs', opts['safeGetFilePath']),
             ...path.node.body
           ];
+        }
+      },
+      // transform map.get('a') to safeGetImmutableJs(map, 'a')
+      CallExpression(path) {
+        const memberExpression = path.node.callee; // map.get
+        const property = path.node.arguments[0]; // 'a'
+
+        if ((memberExpression.type === 'MemberExpression') &&
+            (memberExpression.property.type === 'Identifier') &&
+            (memberExpression.property.name === 'get')) {
+          path.replaceWith(t.callExpression(
+            t.identifier('safeGetImmutableJs'),
+            [
+              memberExpression.object,
+              property
+            ]
+          ));
         }
       },
       // ignore left sides of assignments

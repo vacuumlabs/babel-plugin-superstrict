@@ -26,3 +26,17 @@ exports.safeGetItem = (object, property) => {
 };
 
 exports.safeGetAttr = exports.safeGetItem;
+
+exports.safeGetImmutableJs = (object, property) => {
+  if (object.has(property)) {
+    let toReturn = object.get(property);
+
+    if (typeof toReturn === 'function') {
+      return toReturn.bind(object);
+    } else {
+      return toReturn;
+    }
+  } else {
+    throw new NonExistingPropertyException(object, property);
+  }
+};

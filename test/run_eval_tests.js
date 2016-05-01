@@ -13,5 +13,6 @@ function test(source) {
   });
 }
 
-['basic', 'array', 'getters_setters', 'left_side_of_assignment', 'detect_directive',
- 'flexible_directives', 'safeGetAttr', 'this'].map(test);
+['basic', 'array', 'getters_setters', 'left_side_of_assignment',
+ 'detect_directive', 'flexible_directives', 'safeGetAttr', 'this',
+ 'immutable_map_success', 'immutable_map_fail'].map(test);
