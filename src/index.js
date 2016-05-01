@@ -53,6 +53,25 @@ function generateSafeGetCall(object, property, computed) {
   );
 };
 
+// safeGetImmutableJs(object, 'property');
+// safeGetInImmutableJs(object, ['a', 'b']);
+function generateImmutableJsGetCall(object, property, type) {
+  let functionName;
+  if (type === 'get') {
+    functionName = 'safeGetImmutableJs';
+  } else if (type === 'getIn') {
+    functionName = 'safeGetInImmutableJs';
+  }
+
+  return t.callExpression(
+    t.identifier(functionName),
+    [
+      object,
+      property
+    ]
+  );
+};
+
 function splitMultipleDirectives(directive) {
   if (!directive.startsWith('use ')) {
     return [];
@@ -99,6 +118,7 @@ export default function() {
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
             generateRequire('safeGetImmutableJs', opts['safeGetFilePath']),
+            generateRequire('safeGetInImmutableJs', opts['safeGetFilePath']),
             ...path.node.body
           ];
         }
@@ -108,19 +128,24 @@ export default function() {
       // used when key is not found
       CallExpression(path) {
         const memberExpression = path.node.callee; // map.get
-        const property = path.node.arguments[0]; // 'a'
 
-        if ((memberExpression.type === 'MemberExpression') &&
-            (memberExpression.property.type === 'Identifier') &&
-            (memberExpression.property.name === 'get') &&
-            (path.node.arguments.length === 1)) {
-          path.replaceWith(t.callExpression(
-            t.identifier('safeGetImmutableJs'),
-            [
-              memberExpression.object,
-              property
-            ]
-          ));
+        if ((memberExpression.type !== 'MemberExpression') ||
+            (memberExpression.property.type !== 'Identifier') ||
+            (path.node.arguments.length !== 1)) {
+          return;
+        }
+
+        const functionName = memberExpression.property.name;
+        if (functionName === 'get') {
+          const property = path.node.arguments[0]; // 'a'
+          path.replaceWith(generateImmutableJsGetCall(memberExpression.object,
+                                                      property,
+                                                      'get'));
+        } else if (functionName === 'getIn') {
+          const searchKeyPath = path.node.arguments[0]; // ['a', 'b']
+          path.replaceWith(generateImmutableJsGetCall(memberExpression.object,
+                                                      searchKeyPath,
+                                                      'getIn'));
         }
       },
       // ignore left sides of assignments

@@ -40,3 +40,17 @@ exports.safeGetImmutableJs = (object, property) => {
     throw new NonExistingPropertyException(object, property);
   }
 };
+
+exports.safeGetInImmutableJs = (object, property) => {
+  if (object.hasIn(property)) {
+    let toReturn = object.getIn(property);
+
+    if (typeof toReturn === 'function') {
+      return toReturn.bind(object);
+    } else {
+      return toReturn;
+    }
+  } else {
+    throw new NonExistingPropertyException(object, property);
+  }
+};
