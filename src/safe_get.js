@@ -7,50 +7,45 @@ function NonExistingPropertyException(object, property) {
   };
 };
 
-exports.safeGetItem = (object, property) => {
-  let toReturn;
+const conditionalBind = (func) => {
+  return (object, property) => {
+    const toReturn = func(object, property);
 
+    if (typeof toReturn === 'function') {
+      return toReturn.bind(object);
+    } else {
+      return toReturn;
+    }
+  }
+};
+
+const safeGetItem = (object, property) => {
   if (property in object) {
-    toReturn = object[property];
+    return object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
-    toReturn = object[Symbol.for('safeGetAttr')](property);
+    return object[Symbol.for('safeGetAttr')](property);
   } else {
     throw new NonExistingPropertyException(object, property);
   }
-
-  if (typeof toReturn === 'function') {
-    return toReturn.bind(object);
-  } else {
-    return toReturn;
-  }
 };
 
-exports.safeGetAttr = exports.safeGetItem;
-
-exports.safeGetImmutableJs = (object, property) => {
+const safeGetImmutableJs = (object, property) => {
   if (object.has(property)) {
-    let toReturn = object.get(property);
-
-    if (typeof toReturn === 'function') {
-      return toReturn.bind(object);
-    } else {
-      return toReturn;
-    }
+    return object.get(property);
   } else {
     throw new NonExistingPropertyException(object, property);
   }
 };
 
-exports.safeGetInImmutableJs = (object, property) => {
+const safeGetInImmutableJs = (object, property) => {
   if (object.hasIn(property)) {
-    let toReturn = object.getIn(property);
-
-    if (typeof toReturn === 'function') {
-      return toReturn.bind(object);
-    } else {
-      return toReturn;
-    }
+    return object.getIn(property);
   } else {
     throw new NonExistingPropertyException(object, property);
   }
 };
+
+exports.safeGetItem = conditionalBind(safeGetItem);
+exports.safeGetAttr = exports.safeGetItem;
+exports.safeGetImmutableJs = conditionalBind(safeGetImmutableJs);
+exports.safeGetInImmutableJs = conditionalBind(safeGetInImmutableJs);
