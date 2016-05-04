@@ -24,28 +24,28 @@ const safeGetItem = (object, property) => {
     return object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
     return object[Symbol.for('safeGetAttr')](property);
-  } else {
-    throw new NonExistingPropertyException(object, property);
-  }
-};
-
-const safeGetImmutableJs = (object, property) => {
-  if (object.has(property)) {
+  } else if (('has' in object) && (object.has(property))) {
     return object.get(property);
   } else {
     throw new NonExistingPropertyException(object, property);
   }
 };
 
-const safeGetInImmutableJs = (object, property) => {
-  if (object.hasIn(property)) {
-    return object.getIn(property);
+const safeGetAttr = (object, property) => {
+  if ('has' in object) {
+    if (object.has(property)) {
+      return object.get(property);
+    } else {
+      throw new NonExistingPropertyException(object, property);
+    }
+  } else if (property in object) {
+    return object[property];
+  } else if (Symbol.for('safeGetAttr') in object) {
+    return object[Symbol.for('safeGetAttr')](property);
   } else {
     throw new NonExistingPropertyException(object, property);
   }
 };
 
 exports.safeGetItem = conditionalBind(safeGetItem);
-exports.safeGetAttr = exports.safeGetItem;
-exports.safeGetImmutableJs = conditionalBind(safeGetImmutableJs);
-exports.safeGetInImmutableJs = conditionalBind(safeGetInImmutableJs);
+exports.safeGetAttr = conditionalBind(safeGetAttr);

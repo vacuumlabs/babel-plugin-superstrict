@@ -53,25 +53,6 @@ function generateSafeGetCall(object, property, computed) {
   );
 };
 
-// safeGetImmutableJs(object, 'property');
-// safeGetInImmutableJs(object, ['a', 'b']);
-function generateImmutableJsGetCall(object, property, type) {
-  let functionName;
-  if (type === 'get') {
-    functionName = 'safeGetImmutableJs';
-  } else if (type === 'getIn') {
-    functionName = 'safeGetInImmutableJs';
-  }
-
-  return t.callExpression(
-    t.identifier(functionName),
-    [
-      object,
-      property
-    ]
-  );
-};
-
 function splitMultipleDirectives(directive) {
   if (!directive.startsWith('use ')) {
     return [];
@@ -117,35 +98,8 @@ export default function() {
           path.node.body = [
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
-            generateRequire('safeGetImmutableJs', opts['safeGetFilePath']),
-            generateRequire('safeGetInImmutableJs', opts['safeGetFilePath']),
             ...path.node.body
           ];
-        }
-      },
-      // transform map.get('a') to safeGetImmutableJs(map, 'a')
-      // do not transform if get has two arguments - second is default value
-      // used when key is not found
-      CallExpression(path) {
-        const memberExpression = path.node.callee; // map.get
-
-        if ((memberExpression.type !== 'MemberExpression') ||
-            (memberExpression.property.type !== 'Identifier') ||
-            (path.node.arguments.length !== 1)) {
-          return;
-        }
-
-        const functionName = memberExpression.property.name;
-        if (functionName === 'get') {
-          const property = path.node.arguments[0]; // 'a'
-          path.replaceWith(generateImmutableJsGetCall(memberExpression.object,
-                                                      property,
-                                                      'get'));
-        } else if (functionName === 'getIn') {
-          const searchKeyPath = path.node.arguments[0]; // ['a', 'b']
-          path.replaceWith(generateImmutableJsGetCall(memberExpression.object,
-                                                      searchKeyPath,
-                                                      'getIn'));
         }
       },
       // ignore left sides of assignments

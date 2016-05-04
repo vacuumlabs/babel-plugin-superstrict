@@ -10,7 +10,7 @@ try {
   };
 
   var map = new WeakMap([[obj1, 1], [obj2, 2]]);
-  var d = map.get(obj1);
+  var a = map[obj1];
   'ok';
 } catch (e) {
 }

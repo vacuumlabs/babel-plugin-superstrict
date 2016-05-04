@@ -15,7 +15,10 @@ function test(source) {
 
 ['basic', 'array', 'getters_setters', 'left_side_of_assignment',
  'detect_directive', 'flexible_directives', 'safeGetAttr', 'this',
- 'immutable_map_success', 'immutable_map_fail', 'immutable_map_default',
- 'map_success', 'map_fail', 'weak_map_success', 'weak_map_fail',
- 'immutable_map_get_in_success', 'immutable_map_get_in_fail',
- 'immutable_map_get_in_default'].map(test);
+ 'immutable_map_index_success', 'immutable_map_index_fail',
+ 'immutable_map_index_method', 'immutable_map_property_success',
+ 'immutable_map_property_fail', 'immutable_map_property_method',
+ 'map_index_success', 'map_index_fail', 'map_index_method',
+ 'map_property_success', 'map_property_fail', 'map_property_method',
+ 'weak_map_index_success', 'weak_map_index_fail', 'weak_map_index_method'
+].map(test);
