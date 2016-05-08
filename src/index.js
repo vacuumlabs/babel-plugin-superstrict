@@ -98,6 +98,7 @@ export default function() {
           path.node.body = [
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
+            generateRequire('checkCastingBinary', opts['checkCastingFilePath']),
             ...path.node.body
           ];
         }
@@ -113,6 +114,18 @@ export default function() {
           path.replaceWith(generateSafeGetCall(path.node.object,
                                                path.node.property,
                                                path.node.computed));
+        }
+      },
+      BinaryExpression(path) {
+        if (['+', '-', '*', '/', '%'].indexOf(path.node.operator) !== -1) {
+          path.replaceWith(t.callExpression(
+            t.identifier('checkCastingBinary'),
+            [
+              path.node.left,
+              path.node.right,
+              t.stringLiteral(path.node.operator)
+            ]
+          ));
         }
       }
     }
