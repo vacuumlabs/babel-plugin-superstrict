@@ -16,7 +16,7 @@ const conditionalBind = (func) => {
     } else {
       return toReturn;
     }
-  }
+  };
 };
 
 const safeGetItem = (object, property) => {
@@ -24,15 +24,15 @@ const safeGetItem = (object, property) => {
     return object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
     return object[Symbol.for('safeGetAttr')](property);
-  } else if (('has' in object) && (object.has(property))) {
-    return object.get(property);
   } else {
     throw new NonExistingPropertyException(object, property);
   }
 };
 
 const safeGetAttr = (object, property) => {
-  if ('has' in object) {
+  // covers data structures with has/get resolution protocol, e.g. Immutable.js,
+  // ES6 Maps and WeakMaps
+  if (('has' in object) && ('get' in object)) {
     if (object.has(property)) {
       return object.get(property);
     } else {
