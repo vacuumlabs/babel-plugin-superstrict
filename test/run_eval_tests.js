@@ -30,5 +30,19 @@ function test(source) {
  'casting_divide_numbers', 'casting_divide_strings', 'casting_divide_objects',
  'casting_divide_arrays', 'casting_divide_bools', 'casting_remainder_numbers',
  'casting_remainder_strings', 'casting_remainder_objects',
- 'casting_remainder_arrays', 'casting_remainder_bools'
+ 'casting_remainder_arrays', 'casting_remainder_bools',
+ 'casting_prefix_increment_number', 'casting_prefix_increment_string',
+ 'casting_prefix_increment_object', 'casting_prefix_increment_array',
+ 'casting_prefix_increment_bool', 'casting_prefix_decrement_number',
+ 'casting_prefix_decrement_string', 'casting_prefix_decrement_object',
+ 'casting_prefix_decrement_array', 'casting_prefix_decrement_bool',
+ 'casting_postfix_increment_number', 'casting_postfix_increment_string',
+ 'casting_postfix_increment_object', 'casting_postfix_increment_array',
+ 'casting_postfix_increment_bool', 'casting_postfix_decrement_number',
+ 'casting_postfix_decrement_string', 'casting_postfix_decrement_object',
+ 'casting_postfix_decrement_array', 'casting_postfix_decrement_bool',
+ 'casting_positive_number', 'casting_positive_string', 'casting_positive_object',
+ 'casting_positive_array', 'casting_positive_bool', 'casting_negative_number',
+ 'casting_negative_string', 'casting_negative_object', 'casting_negative_array',
+ 'casting_negative_bool'
 ].map(test);

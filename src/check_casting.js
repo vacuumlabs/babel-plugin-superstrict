@@ -59,3 +59,29 @@ exports.checkCastingBinary = (leftOperand, rightOperand, operator) => {
     }
   }
 };
+
+exports.checkCastingUnaryPrefix = (operand, operator) => {
+  if (typeof operand !== 'number') {
+    throw new ImplicitCastingException(operand, undefined, operator);
+  }
+
+  switch (operator) {
+  case '++':
+    return ++operand;
+  case '--':
+    return --operand;
+  case '+':
+    return +operand;
+  case '-':
+    return -operand;
+  }
+};
+
+exports.checkCastingUnaryPostfix = (originalOperand, operand, operator) => {
+  if (typeof originalOperand !== 'number') {
+    throw new ImplicitCastingException(originalOperand, undefined, operator);
+  }
+
+  return originalOperand; // postfix operators return original value and then
+                          // incremnet/decrement it
+};
