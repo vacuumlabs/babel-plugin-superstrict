@@ -44,5 +44,13 @@ function test(source) {
  'casting_positive_number', 'casting_positive_string', 'casting_positive_object',
  'casting_positive_array', 'casting_positive_bool', 'casting_negative_number',
  'casting_negative_string', 'casting_negative_object', 'casting_negative_array',
- 'casting_negative_bool'
+ 'casting_negative_bool', 'casting_less_numbers', 'casting_less_strings',
+ 'casting_less_objects', 'casting_less_arrays', 'casting_less_bools',
+ 'casting_less_equal_numbers', 'casting_less_equal_strings',
+ 'casting_less_equal_objects', 'casting_less_equal_arrays',
+ 'casting_less_equal_bools', 'casting_greater_numbers', 'casting_greater_strings',
+ 'casting_greater_objects', 'casting_greater_arrays', 'casting_greater_bools',
+ 'casting_greater_equal_numbers', 'casting_greater_equal_strings',
+ 'casting_greater_equal_objects', 'casting_greater_equal_arrays',
+ 'casting_greater_equal_bools',
 ].map(test);

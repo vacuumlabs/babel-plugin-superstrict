@@ -153,7 +153,8 @@ export default function() {
         }
       },
       BinaryExpression(path) {
-        if (['+', '-', '*', '/', '%'].indexOf(path.node.operator) !== -1) {
+        if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=']
+          .indexOf(path.node.operator) !== -1) {
           path.replaceWith(t.callExpression(
             t.identifier('checkCastingBinary'),
             [
