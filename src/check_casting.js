@@ -81,6 +81,24 @@ exports.checkCastingBinary = (leftOperand, rightOperand, operator) => {
     } else {
       throw new ImplicitCastingException(leftOperand, rightOperand, operator);
     }
+  case '<<':
+    if (bothOfSameType(leftOperand, rightOperand, 'number')) {
+      return leftOperand << rightOperand;
+    } else {
+      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+    }
+  case '>>':
+    if (bothOfSameType(leftOperand, rightOperand, 'number')) {
+      return leftOperand >> rightOperand;
+    } else {
+      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+    }
+  case '>>>':
+    if (bothOfSameType(leftOperand, rightOperand, 'number')) {
+      return leftOperand >>> rightOperand;
+    } else {
+      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+    }
   }
 };
 

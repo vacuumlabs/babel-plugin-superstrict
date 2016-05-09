@@ -52,5 +52,12 @@ function test(source) {
  'casting_greater_objects', 'casting_greater_arrays', 'casting_greater_bools',
  'casting_greater_equal_numbers', 'casting_greater_equal_strings',
  'casting_greater_equal_objects', 'casting_greater_equal_arrays',
- 'casting_greater_equal_bools',
+ 'casting_greater_equal_bools', 'casting_left_shift_numbers',
+ 'casting_left_shift_strings', 'casting_left_shift_objects',
+ 'casting_left_shift_arrays', 'casting_left_shift_bools',
+ 'casting_signed_right_shift_numbers', 'casting_signed_right_shift_strings',
+ 'casting_signed_right_shift_objects', 'casting_signed_right_shift_arrays',
+ 'casting_signed_right_shift_bools', 'casting_unsigned_right_shift_numbers',
+ 'casting_unsigned_right_shift_strings', 'casting_unsigned_right_shift_objects',
+ 'casting_unsigned_right_shift_arrays', 'casting_unsigned_right_shift_bools'
 ].map(test);
