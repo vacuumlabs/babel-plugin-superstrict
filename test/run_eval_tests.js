@@ -59,5 +59,15 @@ function test(source) {
  'casting_signed_right_shift_objects', 'casting_signed_right_shift_arrays',
  'casting_signed_right_shift_bools', 'casting_unsigned_right_shift_numbers',
  'casting_unsigned_right_shift_strings', 'casting_unsigned_right_shift_objects',
- 'casting_unsigned_right_shift_arrays', 'casting_unsigned_right_shift_bools'
+ 'casting_unsigned_right_shift_arrays', 'casting_unsigned_right_shift_bools',
+ 'casting_bitwise_and_numbers', 'casting_bitwise_and_strings',
+ 'casting_bitwise_and_objects', 'casting_bitwise_and_arrays',
+ 'casting_bitwise_and_bools', 'casting_bitwise_xor_numbers',
+ 'casting_bitwise_xor_strings', 'casting_bitwise_xor_objects',
+ 'casting_bitwise_xor_arrays', 'casting_bitwise_xor_bools',
+ 'casting_bitwise_or_numbers', 'casting_bitwise_or_strings',
+ 'casting_bitwise_or_objects', 'casting_bitwise_or_arrays',
+ 'casting_bitwise_or_bools', 'casting_bitwise_not_number',
+ 'casting_bitwise_not_string', 'casting_bitwise_not_object',
+ 'casting_bitwise_not_array', 'casting_bitwise_not_bool'
 ].map(test);
