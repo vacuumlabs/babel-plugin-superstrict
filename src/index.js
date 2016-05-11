@@ -44,14 +44,12 @@ function generateSafeGetCall(object, property, computed) {
     propertyNode = t.stringLiteral(property.name);
   }
 
-  return t.expressionStatement(
-    t.callExpression(
-      t.identifier(functionName),
-      [
-        object,
-        propertyNode
-      ]
-    )
+  return t.callExpression(
+    t.identifier(functionName),
+    [
+      object,
+      propertyNode
+    ]
   );
 };
 
