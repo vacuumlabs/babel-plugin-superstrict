@@ -69,5 +69,6 @@ function test(source) {
  'casting_bitwise_or_objects', 'casting_bitwise_or_arrays',
  'casting_bitwise_or_bools', 'casting_bitwise_not_number',
  'casting_bitwise_not_string', 'casting_bitwise_not_object',
- 'casting_bitwise_not_array', 'casting_bitwise_not_bool'
+ 'casting_bitwise_not_array', 'casting_bitwise_not_bool',
+ 'division_by_zero', 'division_of_zero_by_zero', 'integer_overflow'
 ].map(test);

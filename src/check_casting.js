@@ -20,11 +20,60 @@ function ImplicitCastingException(firstOperand, secondOperand, operator) {
   }
 };
 
+function DivisionByZeroException(operand) {
+  this.operand = operand;
+
+  this.toString = () => {
+    return `Division of '${this.operand}' by zero.`;
+  };
+};
+
+function InvalidOperationResultException(result, funcName, ...params) {
+  this.result = result;
+  this.params = params;
+
+  this.toString = () => {
+    switch (funcName) {
+    case 'checkCastingBinary':
+      let leftOperand = params[0];
+      let rightOperand = params[1];
+      let operator = params[2];
+      return `Invalid operation result: ${leftOperand} ${operator} ${rightOperand} = ${result}.`;
+    case 'checkCastingUnaryPrefix':
+      let operand = params[0];
+      operator = params[1];
+      return `Invalid operation result: ${operator}${operand} = ${result}.`;
+    case 'checkCastingUnaryPostfix':
+      operand = params[0];
+      operator = params[2];
+      return `Invalid operation result: ${operand}${operator} = ${result}.`;
+    }
+  };
+};
+
 const bothOfSameType = (first, second, type) => {
   return ((typeof first === type) && (typeof second === type));
 };
 
-exports.checkCastingBinary = (leftOperand, rightOperand, operator) => {
+const checkInvalidValues = (func) => {
+  return (...params) => {
+    let toReturn;
+
+    try {
+      toReturn = func(...params);
+    } catch (e) {
+      throw e;
+    }
+
+    if ([NaN, Infinity, -Infinity].indexOf(toReturn) !== -1) {
+      throw new InvalidOperationResultException(toReturn, func.name, ...params);
+    } else {
+      return toReturn;
+    }
+  };
+};
+
+const checkCastingBinary = (leftOperand, rightOperand, operator) => {
   switch(operator) {
   case '+':
     if (bothOfSameType(leftOperand, rightOperand, 'number') ||
@@ -47,13 +96,21 @@ exports.checkCastingBinary = (leftOperand, rightOperand, operator) => {
     }
   case '/':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
-      return leftOperand / rightOperand;
+      if (rightOperand === 0) {
+        throw new DivisionByZeroException(leftOperand);
+      } else {
+        return leftOperand / rightOperand;
+      }
     } else {
       throw new ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '%':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
-      return leftOperand % rightOperand;
+      if (rightOperand === 0) {
+        throw new DivisionByZeroException(leftOperand);
+      } else {
+        return leftOperand % rightOperand;
+      }
     } else {
       throw new ImplicitCastingException(leftOperand, rightOperand, operator);
     }
@@ -120,7 +177,7 @@ exports.checkCastingBinary = (leftOperand, rightOperand, operator) => {
   }
 };
 
-exports.checkCastingUnaryPrefix = (operand, operator) => {
+const checkCastingUnaryPrefix = (operand, operator) => {
   if (typeof operand !== 'number') {
     throw new ImplicitCastingException(operand, undefined, operator);
   }
@@ -139,7 +196,7 @@ exports.checkCastingUnaryPrefix = (operand, operator) => {
   }
 };
 
-exports.checkCastingUnaryPostfix = (originalOperand, operand, operator) => {
+const checkCastingUnaryPostfix = (originalOperand, operand, operator) => {
   if (typeof originalOperand !== 'number') {
     throw new ImplicitCastingException(originalOperand, undefined, operator);
   }
@@ -147,3 +204,7 @@ exports.checkCastingUnaryPostfix = (originalOperand, operand, operator) => {
   return originalOperand; // postfix operators return original value and then
                           // incremnet/decrement it
 };
+
+exports.checkCastingBinary = checkInvalidValues(checkCastingBinary);
+exports.checkCastingUnaryPrefix = checkInvalidValues(checkCastingUnaryPrefix);
+exports.checkCastingUnaryPostfix = checkInvalidValues(checkCastingUnaryPostfix);
