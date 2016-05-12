@@ -70,5 +70,8 @@ function test(source) {
  'casting_bitwise_or_bools', 'casting_bitwise_not_number',
  'casting_bitwise_not_string', 'casting_bitwise_not_object',
  'casting_bitwise_not_array', 'casting_bitwise_not_bool',
- 'division_by_zero', 'division_of_zero_by_zero', 'integer_overflow'
+ 'division_by_zero', 'division_of_zero_by_zero', 'integer_overflow',
+ 'check_in_array', 'check_in_object', 'check_in_string', 'check_in_immutable_map',
+ 'check_in_immutable_set', 'check_in_map', 'check_in_weak_map', 'check_in_set',
+ 'check_in_weak_set'
 ].map(test);

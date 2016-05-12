@@ -98,6 +98,7 @@ export default function() {
           path.node.body = [
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
+            generateRequire('checkIn', opts['safeGetFilePath']),
             generateRequire('checkCastingBinary', opts['checkCastingFilePath']),
             generateRequire('checkCastingUnaryPrefix', opts['checkCastingFilePath']),
             generateRequire('checkCastingUnaryPostfix', opts['checkCastingFilePath']),
@@ -153,15 +154,28 @@ export default function() {
         }
       },
       BinaryExpression(path) {
+        const {left, right, operator} = path.node;
+        let functionName, object, property;
+
         if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=',
              '<<', '>>', '>>>', '&', '^', '|']
-          .indexOf(path.node.operator) !== -1) {
+          .indexOf(operator) !== -1) {
+          functionName = 'checkCastingBinary';
+          object = left;
+          property = right;
+        } else if (operator === 'in') {
+          functionName = 'checkIn';
+          object = right;
+          property = left;
+        }
+
+        if (functionName) {
           path.replaceWith(t.callExpression(
-            t.identifier('checkCastingBinary'),
+            t.identifier(functionName),
             [
-              path.node.left,
-              path.node.right,
-              t.stringLiteral(path.node.operator)
+              object,
+              property,
+              t.stringLiteral(operator)
             ]
           ));
         }
