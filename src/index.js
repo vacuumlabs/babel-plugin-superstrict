@@ -76,7 +76,7 @@ export default function() {
         let foundNegativeDirective = false;
 
         for (const directiveNode of path.node.directives) {
-          const directiveString = directiveNode.value.value
+          const directiveString = directiveNode.value.value;
           const directives = splitMultipleDirectives(directiveString);
           for (const directive of directives) {
             if (directive === 'superstrict') {
@@ -98,6 +98,10 @@ export default function() {
           path.node.body = [
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
+            generateRequire('checkIn', opts['safeGetFilePath']),
+            generateRequire('checkCastingBinary', opts['checkCastingFilePath']),
+            generateRequire('checkCastingUnaryPrefix', opts['checkCastingFilePath']),
+            generateRequire('checkCastingUnaryPostfix', opts['checkCastingFilePath']),
             ...path.node.body
           ];
         }
@@ -113,6 +117,67 @@ export default function() {
           path.replaceWith(generateSafeGetCall(path.node.object,
                                                path.node.property,
                                                path.node.computed));
+        }
+      },
+      UnaryExpression(path) {
+        path.replaceWith(t.callExpression(
+          t.identifier('checkCastingUnaryPrefix'),
+          [
+            path.node.argument,
+            t.stringLiteral(path.node.operator)
+          ]
+        ));
+      },
+      UpdateExpression(path) {
+        const {node, node: {argument, operator, prefix}} = path;
+
+        if (prefix) {
+          path.replaceWith(t.callExpression(
+            t.identifier('checkCastingUnaryPrefix'),
+            [
+              argument,
+              t.stringLiteral(operator)
+            ]
+          ));
+        } else { // postfix increment/decrement
+          path.replaceWith(t.callExpression(
+            t.identifier('checkCastingUnaryPostfix'),
+            [
+              argument, // original value to determine type
+              node, // whole updateExpression to increment/decrement
+                    // variable in original scope
+              t.stringLiteral(operator)
+            ]
+          ));
+
+          path.skip(); // do not recursively transpile unaryExpression
+        }
+      },
+      BinaryExpression(path) {
+        const {left, right, operator} = path.node;
+        let functionName, object, property;
+
+        if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=',
+             '<<', '>>', '>>>', '&', '^', '|']
+          .indexOf(operator) !== -1) {
+          functionName = 'checkCastingBinary';
+          object = left;
+          property = right;
+        } else if (operator === 'in') {
+          functionName = 'checkIn';
+          object = right;
+          property = left;
+        }
+
+        if (functionName) {
+          path.replaceWith(t.callExpression(
+            t.identifier(functionName),
+            [
+              object,
+              property,
+              t.stringLiteral(operator)
+            ]
+          ));
         }
       }
     }

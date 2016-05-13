@@ -7,6 +7,7 @@ export default function babelify(sourceFileName) {
     plugins: [
       ['../../lib', {
         'safeGetFilePath': '../lib/safe_get.js',
+        'checkCastingFilePath': '../lib/check_casting.js',
         'directivePolicy': 'opt in'
       }]
     ]
