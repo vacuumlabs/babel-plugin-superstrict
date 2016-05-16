@@ -73,5 +73,5 @@ function test(source) {
  'division_by_zero', 'division_of_zero_by_zero', 'integer_overflow',
  'check_in_array', 'check_in_object', 'check_in_string', 'check_in_immutable_map',
  'check_in_immutable_set', 'check_in_map', 'check_in_weak_map', 'check_in_set',
- 'check_in_weak_set', 'string_fail', 'string_fail'
+ 'check_in_weak_set', 'string_fail', 'string_success'
 ].map(test);

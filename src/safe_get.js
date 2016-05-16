@@ -28,6 +28,8 @@ const safeGetItem = (object, property) => {
   if ((typeof object === 'number') || (object === undefined) ||
       (object === null)) {
     throw new NonExistingPropertyException(object, property);
+  } else if ((typeof object === 'string') && (property in String.prototype)) {
+    return object[property];
   } else if (property in object) {
     return object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
