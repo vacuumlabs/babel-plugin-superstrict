@@ -120,13 +120,15 @@ export default function() {
         }
       },
       UnaryExpression(path) {
-        path.replaceWith(t.callExpression(
-          t.identifier('checkCastingUnaryPrefix'),
-          [
-            path.node.argument,
-            t.stringLiteral(path.node.operator)
-          ]
-        ));
+        if (['++', '--', '+', '-', '~'].indexOf(path.node.operator) !== -1) {
+          path.replaceWith(t.callExpression(
+            t.identifier('checkCastingUnaryPrefix'),
+            [
+              path.node.argument,
+              t.stringLiteral(path.node.operator)
+            ]
+          ));
+        }
       },
       UpdateExpression(path) {
         const {node, node: {argument, operator, prefix}} = path;

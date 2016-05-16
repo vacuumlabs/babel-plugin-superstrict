@@ -1,9 +1,14 @@
 function NonExistingPropertyException(object, property) {
   this.object = object;
+  if ((object !== undefined) && (object !== null)) {
+    this.object = JSON.stringify(object);
+  } else {
+    this.object = object;
+  }
   this.property = property;
 
   this.toString = () => {
-    return `Property '${this.property}' is not found in object '${JSON.stringify(this.object)}'.`;
+    return `Property '${this.property}' is not found in object '${this.object}'.`;
   };
 };
 
@@ -20,7 +25,12 @@ const conditionalBind = (func) => {
 };
 
 const safeGetItem = (object, property) => {
-  if (property in object) {
+  if ((typeof object === 'number') || (object === undefined) ||
+      (object === null)) {
+    throw new NonExistingPropertyException(object, property);
+  } else if ((typeof object === 'string') && (property in String.prototype)) {
+    return object[property];
+  } else if (property in object) {
     return object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
     return object[Symbol.for('safeGetAttr')](property);
@@ -30,9 +40,18 @@ const safeGetItem = (object, property) => {
 };
 
 const safeGetAttr = (object, property) => {
-  // covers data structures with has/get resolution protocol, e.g. Immutable.js,
-  // ES6 Maps and WeakMaps
-  if (('has' in object) && ('get' in object)) {
+  if ((typeof object === 'number') || (object === undefined) ||
+      (object === null)) {
+    throw new NonExistingPropertyException(object, property);
+  } else if (typeof object === 'string') {
+    if ((property >= 0) && (property < object.length)) {
+      return object[property];
+    } else {
+      throw new NonExistingPropertyException(object, property);
+    }
+  } else if (('has' in object) && ('get' in object)) {
+    // covers data structures with has/get resolution protocol, e.g. Immutable.js,
+    // ES6 Maps and WeakMaps
     if (object.has(property)) {
       return object.get(property);
     } else {
