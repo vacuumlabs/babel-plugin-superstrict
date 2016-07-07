@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matejkrajcovic/babel-plugin-superstrict.git"
+    "url": "git+https://github.com/vacuumlabs/babel-plugin-superstrict.git"
   },
   "author": "Matej Krajčovič",
   "keywords": [
@@ -19,9 +19,9 @@
   ],
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/matejkrajcovic/babel-plugin-superstrict/issues"
+    "url": "https://github.com/vacuumlabs/babel-plugin-superstrict/issues"
   },
-  "homepage": "https://github.com/matejkrajcovic/babel-plugin-superstrict#readme",
+  "homepage": "https://github.com/vacuumlabs/babel-plugin-superstrict#readme",
   "devDependencies": {
     "babel-cli": "^6.6.4",
     "babel-core": "^6.6.4",
