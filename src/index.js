@@ -2,6 +2,8 @@ import * as t from 'babel-types';
 
 const ignoredNode = Symbol('ignoredNode');
 
+let shouldTransform = false;
+
 // returns t.memberExpression but marked to be ignored when visited
 function getIgnoredMemberExpression(object, property, computed) {
   let node = t.memberExpression(object, property, computed);
@@ -87,14 +89,16 @@ export default function() {
           }
         }
 
+        shouldTransform = true;
         // 'opt in' transpiles only files with positive directive
         if ((directivePolicy === 'opt in') && (!foundPositiveDirective)) {
-          path.skip();
+          shouldTransform = false;
         // 'opt out' transpiles all files except those with negative directive
         } else if ((directivePolicy === 'opt out') && (foundNegativeDirective)) {
-          path.skip();
+          shouldTransform = false;
         // in other cases or with 'everything' policy transpile file
-        } else {
+        }
+        if (shouldTransform) {
           path.node.body = [
             generateRequire('safeGetItem', opts['safeGetFilePath']),
             generateRequire('safeGetAttr', opts['safeGetFilePath']),
@@ -108,9 +112,11 @@ export default function() {
       },
       // ignore left sides of assignments
       AssignmentExpression(path) {
+        if (!shouldTransform) { return; }
         path.node.left[ignoredNode] = true;
       },
       MemberExpression(path) {
+        if (!shouldTransform) { return; }
         if (path.node[ignoredNode]) {
           path.skip();
         } else {
@@ -122,6 +128,7 @@ export default function() {
         }
       },
       UnaryExpression(path) {
+        if (!shouldTransform) { return; }
         if (['++', '--', '+', '-', '~'].indexOf(path.node.operator) !== -1) {
           path.replaceWith(t.callExpression(
             t.identifier('checkCastingUnaryPrefix'),
@@ -133,6 +140,7 @@ export default function() {
         }
       },
       UpdateExpression(path) {
+        if (!shouldTransform) { return; }
         const {node, node: {argument, operator, prefix}} = path;
 
         if (prefix) {
@@ -158,6 +166,7 @@ export default function() {
         }
       },
       BinaryExpression(path) {
+        if (!shouldTransform) { return; }
         const {left, right, operator} = path.node;
         let functionName, object, property;
 
