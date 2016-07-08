@@ -114,9 +114,11 @@ export default function() {
         if (path.node[ignoredNode]) {
           path.skip();
         } else {
-          path.replaceWith(generateSafeGetCall(path.node.object,
-                                               path.node.property,
-                                               path.node.computed));
+          path.replaceWith(generateSafeGetCall(
+            path.node.object,
+            path.node.property,
+            path.node.computed
+          ));
         }
       },
       UnaryExpression(path) {
