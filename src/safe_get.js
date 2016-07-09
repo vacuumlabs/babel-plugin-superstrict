@@ -1,16 +1,9 @@
 function NonExistingPropertyException(object, property) {
-  this.object = object;
-  if ((object !== undefined) && (object !== null)) {
-    this.object = JSON.stringify(object);
-  } else {
-    this.object = object;
-  }
-  this.property = property;
-
-  this.toString = () => {
-    return `Property '${this.property}' is not found in object '${this.object}'.`;
-  };
+  let keyString = JSON.stringify(Object.keys(object));
+  return new Error(`Property ${property} not found in object with keys ${keyString}`);
 };
+
+NonExistingPropertyException.prototype = Error.prototype;
 
 const conditionalBind = (func) => {
   return (object, property) => {
@@ -27,7 +20,7 @@ const conditionalBind = (func) => {
 const safeGetItem = (object, property) => {
   if ((typeof object === 'number') || (object === undefined) ||
       (object === null)) {
-    throw new NonExistingPropertyException(object, property);
+    throw NonExistingPropertyException(object, property);
   } else if ((typeof object === 'string') && (property in String.prototype)) {
     return object[property];
   } else if (property in object) {
@@ -35,19 +28,19 @@ const safeGetItem = (object, property) => {
   } else if (Symbol.for('safeGetAttr') in object) {
     return object[Symbol.for('safeGetAttr')](property);
   } else {
-    throw new NonExistingPropertyException(object, property);
+    throw NonExistingPropertyException(object, property);
   }
 };
 
 const safeGetAttr = (object, property) => {
   if ((typeof object === 'number') || (object === undefined) ||
       (object === null)) {
-    throw new NonExistingPropertyException(object, property);
+    throw NonExistingPropertyException(object, property);
   } else if (typeof object === 'string') {
     if ((property >= 0) && (property < object.length)) {
       return object[property];
     } else {
-      throw new NonExistingPropertyException(object, property);
+      throw NonExistingPropertyException(object, property);
     }
   } else if (('has' in object) && ('get' in object)) {
     // covers data structures with has/get resolution protocol, e.g. Immutable.js,
@@ -55,14 +48,14 @@ const safeGetAttr = (object, property) => {
     if (object.has(property)) {
       return object.get(property);
     } else {
-      throw new NonExistingPropertyException(object, property);
+      throw NonExistingPropertyException(object, property);
     }
   } else if (property in object) {
     return object[property];
   } else if (Symbol.for('safeGetAttr') in object) {
     return object[Symbol.for('safeGetAttr')](property);
   } else {
-    throw new NonExistingPropertyException(object, property);
+    throw NonExistingPropertyException(object, property);
   }
 };
 
