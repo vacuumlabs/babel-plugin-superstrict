@@ -109,90 +109,92 @@ export default function() {
             ...path.node.body
           ];
         }
-      },
-      // ignore left sides of assignments
-      AssignmentExpression(path) {
-        if (!shouldTransform) { return; }
-        path.node.left[ignoredNode] = true;
-      },
-      MemberExpression(path) {
-        if (!shouldTransform) { return; }
-        if (path.node[ignoredNode]) {
-          path.skip();
-        } else {
-          path.replaceWith(generateSafeGetCall(
-            path.node.object,
-            path.node.property,
-            path.node.computed
-          ));
-        }
-      },
-      UnaryExpression(path) {
-        if (!shouldTransform) { return; }
-        if (['++', '--', '+', '-', '~'].indexOf(path.node.operator) !== -1) {
-          path.replaceWith(t.callExpression(
-            t.identifier('checkCastingUnaryPrefix'),
-            [
-              path.node.argument,
-              t.stringLiteral(path.node.operator)
-            ]
-          ));
-        }
-      },
-      UpdateExpression(path) {
-        if (!shouldTransform) { return; }
-        const {node, node: {argument, operator, prefix}} = path;
+        path.traverse({
+          // ignore left sides of assignments
+          AssignmentExpression(path) {
+            if (!shouldTransform) { return; }
+            path.node.left[ignoredNode] = true;
+          },
+          MemberExpression(path) {
+            if (!shouldTransform) { return; }
+            if (path.node[ignoredNode]) {
+              path.skip();
+            } else {
+              path.replaceWith(generateSafeGetCall(
+                path.node.object,
+                path.node.property,
+                path.node.computed
+              ));
+            }
+          },
+          UnaryExpression(path) {
+            if (!shouldTransform) { return; }
+            if (['++', '--', '+', '-', '~'].indexOf(path.node.operator) !== -1) {
+              path.replaceWith(t.callExpression(
+                t.identifier('checkCastingUnaryPrefix'),
+                [
+                  path.node.argument,
+                  t.stringLiteral(path.node.operator)
+                ]
+              ));
+            }
+          },
+          UpdateExpression(path) {
+            if (!shouldTransform) { return; }
+            const {node, node: {argument, operator, prefix}} = path;
 
-        if (prefix) {
-          path.replaceWith(t.callExpression(
-            t.identifier('checkCastingUnaryPrefix'),
-            [
-              argument,
-              t.stringLiteral(operator)
-            ]
-          ));
-        } else { // postfix increment/decrement
-          path.replaceWith(t.callExpression(
-            t.identifier('checkCastingUnaryPostfix'),
-            [
-              argument, // original value to determine type
-              node, // whole updateExpression to increment/decrement
-                    // variable in original scope
-              t.stringLiteral(operator)
-            ]
-          ));
+            if (prefix) {
+              path.replaceWith(t.callExpression(
+                t.identifier('checkCastingUnaryPrefix'),
+                [
+                  argument,
+                  t.stringLiteral(operator)
+                ]
+              ));
+            } else { // postfix increment/decrement
+              path.replaceWith(t.callExpression(
+                t.identifier('checkCastingUnaryPostfix'),
+                [
+                  argument, // original value to determine type
+                  node, // whole updateExpression to increment/decrement
+                        // variable in original scope
+                  t.stringLiteral(operator)
+                ]
+              ));
 
-          path.skip(); // do not recursively transpile unaryExpression
-        }
+              path.skip(); // do not recursively transpile unaryExpression
+            }
+          },
+          BinaryExpression(path) {
+            if (!shouldTransform) { return; }
+            const {left, right, operator} = path.node;
+            let functionName, object, property;
+
+            if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=',
+                 '<<', '>>', '>>>', '&', '^', '|']
+              .indexOf(operator) !== -1) {
+              functionName = 'checkCastingBinary';
+              object = left;
+              property = right;
+            } else if (operator === 'in') {
+              functionName = 'checkIn';
+              object = right;
+              property = left;
+            }
+
+            if (functionName) {
+              path.replaceWith(t.callExpression(
+                t.identifier(functionName),
+                [
+                  object,
+                  property,
+                  t.stringLiteral(operator)
+                ]
+              ));
+            }
+          }
+        });
       },
-      BinaryExpression(path) {
-        if (!shouldTransform) { return; }
-        const {left, right, operator} = path.node;
-        let functionName, object, property;
-
-        if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=',
-             '<<', '>>', '>>>', '&', '^', '|']
-          .indexOf(operator) !== -1) {
-          functionName = 'checkCastingBinary';
-          object = left;
-          property = right;
-        } else if (operator === 'in') {
-          functionName = 'checkIn';
-          object = right;
-          property = left;
-        }
-
-        if (functionName) {
-          path.replaceWith(t.callExpression(
-            t.identifier(functionName),
-            [
-              object,
-              property,
-              t.stringLiteral(operator)
-            ]
-          ));
-        }
-      }
     }
   };
 }
