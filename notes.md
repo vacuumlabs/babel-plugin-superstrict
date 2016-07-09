@@ -21,11 +21,11 @@
   koliziam, ktore nam dnes hrozia (napr. ak si user pomenuje svoju funkciu `safeGetItem`, mame
   problem.
 
-- premenovat 'opt in', a 'opt out'. Je cudne, ked v nazve enum hodnoty mame medzeru. Nie je to mozno
+- (done) premenovat 'opt in', a 'opt out'. Je cudne, ked v nazve enum hodnoty mame medzeru. Nie je to mozno
   najidealnejsie, ale spravil by som to konzistentne s destructuring pluginom, teda 'optin' a
   'optout'
 
-- sensible defaults pre options. Option 'safeGetFilePath' by mal byt defaultne nastaveny na
+- (done) sensible defaults pre options. Option 'safeGetFilePath' by mal byt defaultne nastaveny na
   `babel-plugin-superstrict/lib/safe_get.js`, `checkCastingFilePath` analogicky. Dalej, ja by som
   zlucil tieto dva subory do jedneho: `superstrict_runtime.js`. Pokial by hrozilo ze tento subor
   bude privelky, vzdy moze requirovat a reexportovat funkcie z pomocnych suborov.

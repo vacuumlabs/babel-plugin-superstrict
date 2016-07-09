@@ -5,11 +5,7 @@ export default function babelify(sourceFileName) {
     babelrc: false,
     presets: ['es2015'],
     plugins: [
-      ['../../lib', {
-        'safeGetFilePath': '../lib/safe_get.js',
-        'checkCastingFilePath': '../lib/check_casting.js',
-        'directivePolicy': 'opt in'
-      }]
+      ['../../lib', { 'directivePolicy': 'optin' }]
     ]
   }).code;
 }

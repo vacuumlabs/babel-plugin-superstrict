@@ -69,10 +69,8 @@ export default function() {
   return {
     visitor: {
       Program(path, {opts}) {
-        let directivePolicy = opts['directivePolicy'];
-        if (!directivePolicy) {
-          directivePolicy = 'opt in'; // default policy
-        }
+        let directivePolicy = opts['directivePolicy'] || 'optin';
+        let superstrictRuntime = opts['superstrictRuntime'] || 'babel-plugin-superstrict/lib/superstrict_runtime.js'
 
         let foundPositiveDirective = false;
         let foundNegativeDirective = false;
@@ -90,22 +88,22 @@ export default function() {
         }
 
         shouldTransform = true;
-        // 'opt in' transpiles only files with positive directive
-        if ((directivePolicy === 'opt in') && (!foundPositiveDirective)) {
+        // 'optin' transpiles only files with positive directive
+        if ((directivePolicy === 'optin') && (!foundPositiveDirective)) {
           shouldTransform = false;
-        // 'opt out' transpiles all files except those with negative directive
-        } else if ((directivePolicy === 'opt out') && (foundNegativeDirective)) {
+        // 'optout' transpiles all files except those with negative directive
+        } else if ((directivePolicy === 'optout') && (foundNegativeDirective)) {
           shouldTransform = false;
         // in other cases or with 'everything' policy transpile file
         }
         if (shouldTransform) {
           path.node.body = [
-            generateRequire('safeGetItem', opts['safeGetFilePath']),
-            generateRequire('safeGetAttr', opts['safeGetFilePath']),
-            generateRequire('checkIn', opts['safeGetFilePath']),
-            generateRequire('checkCastingBinary', opts['checkCastingFilePath']),
-            generateRequire('checkCastingUnaryPrefix', opts['checkCastingFilePath']),
-            generateRequire('checkCastingUnaryPostfix', opts['checkCastingFilePath']),
+            generateRequire('safeGetItem', superstrictRuntime),
+            generateRequire('safeGetAttr', superstrictRuntime),
+            generateRequire('checkIn', superstrictRuntime),
+            generateRequire('checkCastingBinary', superstrictRuntime),
+            generateRequire('checkCastingUnaryPrefix', superstrictRuntime),
+            generateRequire('checkCastingUnaryPostfix', superstrictRuntime),
             ...path.node.body
           ];
         }
