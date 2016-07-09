@@ -116,16 +116,12 @@ export default function() {
             path.node.left[ignoredNode] = true;
           },
           MemberExpression(path) {
-            if (!shouldTransform) { return; }
-            if (path.node[ignoredNode]) {
-              path.skip();
-            } else {
-              path.replaceWith(generateSafeGetCall(
-                path.node.object,
-                path.node.property,
-                path.node.computed
-              ));
-            }
+            if (!shouldTransform || path.node[ignoredNode]) { return; }
+            path.replaceWith(generateSafeGetCall(
+              path.node.object,
+              path.node.property,
+              path.node.computed
+            ));
           },
           UnaryExpression(path) {
             if (!shouldTransform) { return; }
@@ -140,7 +136,7 @@ export default function() {
             }
           },
           UpdateExpression(path) {
-            if (!shouldTransform) { return; }
+            if (!shouldTransform || path.node[ignoredNode]) { return; }
             const {node, node: {argument, operator, prefix}} = path;
 
             if (prefix) {
@@ -152,7 +148,7 @@ export default function() {
                 ]
               ));
             } else { // postfix increment/decrement
-              path.replaceWith(t.callExpression(
+              let checkedExpression = t.callExpression(
                 t.identifier('checkCastingUnaryPostfix'),
                 [
                   argument, // original value to determine type
@@ -160,9 +156,17 @@ export default function() {
                         // variable in original scope
                   t.stringLiteral(operator)
                 ]
-              ));
-
-              path.skip(); // do not recursively transpile unaryExpression
+              );
+              path.replaceWith(checkedExpression);
+              // traverse all the nodes we just added and mark them as 'to be ignored'. This is
+              // necessary for avoiding infinite recursion. Matej Krajcovic used path.skip() to
+              // solve this, however I ran into some issues with .skip() and I cannot find .skip()
+              // documented.
+              path.traverse({
+                UpdateExpression(path) {
+                  path.node[ignoredNode] = true;
+                }
+              });
             }
           },
           BinaryExpression(path) {
