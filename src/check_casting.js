@@ -1,34 +1,39 @@
 function ImplicitCastingException(firstOperand, secondOperand, operator) {
-  this.firstOperand = firstOperand;
-  this.secondOperand = secondOperand;
-  this.operator = operator;
+  // TODO: add propper message here, the original code was too buggy it should be fixed
+  /*
+  const firstOperand = firstOperand;
+  const secondOperand = secondOperand;
+  const operator = operator;
+  let msg
 
-  if (this.secondOperand) {
-    this.toString = () => {
-      return `Binary operation '${this.operation}' is not defined between ` +
-             `operands '${this.leftOperand}' and '${this.rightOperand}'` +
-             `of types '${typeof this.leftOperand}' and ` +
-             `'${typeof this.rightOperand}', respectively, without implicit ` +
-             `casting.`;
-    };
+  if (secondOperand) {
+    msg = `Binary operation '${operation}' is not defined between ` +
+      `operands '${leftOperand}' and '${rightOperand}'` +
+      `of types '${typeof leftOperand}' and ` +
+      `'${typeof rightOperand}', respectively, without implicit ` +
+      `casting.`;
   } else {
-    this.toString = () => {
-      return `Unary operation '${this.operation}' is not defined on operand ` +
-             `'${this.leftOperand}' of type '${typeof this.leftOperand}' ` +
-             `without implicit casting.`;
-    };
+    msg = `Unary operation '${operation}' is not defined on operand ` +
+      `'${leftOperand}' of type '${typeof leftOperand}' ` +
+      `without implicit casting.`;
   }
+  */
+  return new Error('ImplicitCastingException');
 };
 
 function DivisionByZeroException(operand) {
+  /*
   this.operand = operand;
 
   this.toString = () => {
     return `Division of '${this.operand}' by zero.`;
   };
+  */
+  return new Error('DivisionByZeroException');
 };
 
 function InvalidOperationResultException(result, funcName, ...params) {
+  /*
   this.result = result;
   this.params = params;
 
@@ -49,6 +54,8 @@ function InvalidOperationResultException(result, funcName, ...params) {
       return `Invalid operation result: ${operand}${operator} = ${result}.`;
     }
   };
+  */
+  return new Error('InvalidOperationResultException');
 };
 
 const bothOfSameType = (first, second, type) => {
@@ -66,7 +73,7 @@ const checkInvalidValues = (func) => {
     }
 
     if ([NaN, Infinity, -Infinity].indexOf(toReturn) !== -1) {
-      throw new InvalidOperationResultException(toReturn, func.name, ...params);
+      throw InvalidOperationResultException(toReturn, func.name, ...params);
     } else {
       return toReturn;
     }
@@ -80,106 +87,106 @@ const checkCastingBinary = (leftOperand, rightOperand, operator) => {
         bothOfSameType(leftOperand, rightOperand, 'string')) {
       return leftOperand + rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '-':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand - rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '*':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand * rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '/':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       if (rightOperand === 0) {
-        throw new DivisionByZeroException(leftOperand);
+        throw DivisionByZeroException(leftOperand);
       } else {
         return leftOperand / rightOperand;
       }
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '%':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       if (rightOperand === 0) {
-        throw new DivisionByZeroException(leftOperand);
+        throw DivisionByZeroException(leftOperand);
       } else {
         return leftOperand % rightOperand;
       }
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '<':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand < rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '>':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand > rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '<=':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand <= rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '>=':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand >= rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '<<':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand << rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '>>':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand >> rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '>>>':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand >>> rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '&':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand & rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '^':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand ^ rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   case '|':
     if (bothOfSameType(leftOperand, rightOperand, 'number')) {
       return leftOperand | rightOperand;
     } else {
-      throw new ImplicitCastingException(leftOperand, rightOperand, operator);
+      throw ImplicitCastingException(leftOperand, rightOperand, operator);
     }
   }
 };
 
 const checkCastingUnaryPrefix = (operand, operator) => {
   if (typeof operand !== 'number') {
-    throw new ImplicitCastingException(operand, undefined, operator);
+    throw ImplicitCastingException(operand, undefined, operator);
   }
 
   switch (operator) {
@@ -198,7 +205,7 @@ const checkCastingUnaryPrefix = (operand, operator) => {
 
 const checkCastingUnaryPostfix = (originalOperand, operand, operator) => {
   if (typeof originalOperand !== 'number') {
-    throw new ImplicitCastingException(originalOperand, undefined, operator);
+    throw ImplicitCastingException(originalOperand, undefined, operator);
   }
 
   return originalOperand; // postfix operators return original value and then

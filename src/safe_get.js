@@ -3,8 +3,6 @@ function NonExistingPropertyException(object, property) {
   return new Error(`Property ${property} not found in object with keys ${keyString}`);
 };
 
-NonExistingPropertyException.prototype = Error.prototype;
-
 const conditionalBind = (func) => {
   return (object, property) => {
     const toReturn = func(object, property);
