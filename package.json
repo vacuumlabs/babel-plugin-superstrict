@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-superstrict",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Add asserts to prevent accessing nonexistent attribute, auto-casting and overflows",
   "main": "lib/index.js",
   "scripts": {

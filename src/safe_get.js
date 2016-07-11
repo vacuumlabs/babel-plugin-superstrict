@@ -8,7 +8,10 @@ const conditionalBind = (func) => {
     const toReturn = func(object, property);
 
     if (typeof toReturn === 'function') {
-      return toReturn.bind(object);
+      const res = toReturn.bind(object);
+      // bind creates new function with undefined prototype
+      res.prototype = toReturn.prototype;
+      return res;
     } else {
       return toReturn;
     }
