@@ -57,5 +57,5 @@ const safeGetAttr = (object, property) => {
   }
 };
 
-exports.safeGetItem = conditionalBind(safeGetItem);
-exports.safeGetAttr = conditionalBind(safeGetAttr);
+exports.__superstrictSafeGetItem__ = conditionalBind(safeGetItem);
+exports.__superstrictSafeGetAttr__ = conditionalBind(safeGetAttr);

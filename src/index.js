@@ -39,10 +39,10 @@ function generateSafeGetCall(object, property, computed) {
   let functionName;
   let propertyNode;
   if (computed) {
-    functionName = 'safeGetAttr';
+    functionName = '__superstrictSafeGetAttr__';
     propertyNode = property;
   } else {
-    functionName = 'safeGetItem';
+    functionName = '__superstrictSafeGetItem__';
     propertyNode = t.stringLiteral(property.name);
   }
 
@@ -98,11 +98,11 @@ export default function() {
         }
         if (shouldTransform) {
           path.node.body = [
-            generateRequire('safeGetItem', superstrictRuntime),
-            generateRequire('safeGetAttr', superstrictRuntime),
-            generateRequire('checkCastingBinary', superstrictRuntime),
-            generateRequire('checkCastingUnaryPrefix', superstrictRuntime),
-            generateRequire('checkCastingUnaryPostfix', superstrictRuntime),
+            generateRequire('__superstrictSafeGetItem__', superstrictRuntime),
+            generateRequire('__superstrictSafeGetAttr__', superstrictRuntime),
+            generateRequire('__superstrictCheckCastingBinary__', superstrictRuntime),
+            generateRequire('__superstrictCheckCastingUnaryPrefix__', superstrictRuntime),
+            generateRequire('__superstrictCheckCastingUnaryPostfix__', superstrictRuntime),
             ...path.node.body
           ];
         }
@@ -124,7 +124,7 @@ export default function() {
             if (!shouldTransform) { return; }
             if (['++', '--', '+', '-', '~'].indexOf(path.node.operator) !== -1) {
               path.replaceWith(t.callExpression(
-                t.identifier('checkCastingUnaryPrefix'),
+                t.identifier('__superstrictCheckCastingUnaryPrefix__'),
                 [
                   path.node.argument,
                   t.stringLiteral(path.node.operator)
@@ -138,7 +138,7 @@ export default function() {
 
             if (prefix) {
               path.replaceWith(t.callExpression(
-                t.identifier('checkCastingUnaryPrefix'),
+                t.identifier('__superstrictCheckCastingUnaryPrefix__'),
                 [
                   argument,
                   t.stringLiteral(operator)
@@ -146,7 +146,7 @@ export default function() {
               ));
             } else { // postfix increment/decrement
               let checkedExpression = t.callExpression(
-                t.identifier('checkCastingUnaryPostfix'),
+                t.identifier('__superstrictCheckCastingUnaryPostfix__'),
                 [
                   argument, // original value to determine type
                   node, // whole updateExpression to increment/decrement
@@ -174,7 +174,7 @@ export default function() {
                  '<<', '>>', '>>>', '&', '^', '|']
               .indexOf(operator) !== -1) {
               path.replaceWith(t.callExpression(
-                t.identifier('checkCastingBinary'),
+                t.identifier('__superstrictCheckCastingBinary__'),
                 [
                   left, // object
                   right, // property

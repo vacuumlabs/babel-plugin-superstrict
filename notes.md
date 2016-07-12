@@ -16,7 +16,7 @@
   (pricom na attribute access moze byt pouzite . alebo [], moze byt pouzite == alebo === a null moze
   byt vlavo alebo vpravo rovnosti)
 
-- naming. Mohli by sme zaviest python-like mangling name convention, teda, vsetky nase metody a
+- (done) naming. Mohli by sme zaviest python-like mangling name convention, teda, vsetky nase metody a
   symboly by sa mohli volat `_superstrict__${name}`. Toto je hlavne s cielom vyhnut sa name
   koliziam, ktore nam dnes hrozia (napr. ak si user pomenuje svoju funkciu `safeGetItem`, mame
   problem.
