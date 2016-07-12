@@ -57,17 +57,5 @@ const safeGetAttr = (object, property) => {
   }
 };
 
-exports.checkIn = (object, property) => {
-  if (typeof object === 'string') {
-    return object.includes(property); // substring?
-  } else if (Array.isArray(object)) {
-    return object.indexOf(property) !== -1;
-  } else if ('has' in object) {
-    return object.has(property);
-  } else {
-    return property in object;
-  }
-};
-
 exports.safeGetItem = conditionalBind(safeGetItem);
 exports.safeGetAttr = conditionalBind(safeGetAttr);

@@ -100,7 +100,6 @@ export default function() {
           path.node.body = [
             generateRequire('safeGetItem', superstrictRuntime),
             generateRequire('safeGetAttr', superstrictRuntime),
-            generateRequire('checkIn', superstrictRuntime),
             generateRequire('checkCastingBinary', superstrictRuntime),
             generateRequire('checkCastingUnaryPrefix', superstrictRuntime),
             generateRequire('checkCastingUnaryPostfix', superstrictRuntime),
@@ -170,26 +169,15 @@ export default function() {
           BinaryExpression(path) {
             if (!shouldTransform) { return; }
             const {left, right, operator} = path.node;
-            let functionName, object, property;
 
             if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=',
                  '<<', '>>', '>>>', '&', '^', '|']
               .indexOf(operator) !== -1) {
-              functionName = 'checkCastingBinary';
-              object = left;
-              property = right;
-            } else if (operator === 'in') {
-              functionName = 'checkIn';
-              object = right;
-              property = left;
-            }
-
-            if (functionName) {
               path.replaceWith(t.callExpression(
-                t.identifier(functionName),
+                t.identifier('checkCastingBinary'),
                 [
-                  object,
-                  property,
+                  left, // object
+                  right, // property
                   t.stringLiteral(operator)
                 ]
               ));
