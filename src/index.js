@@ -4,22 +4,26 @@ const ignoredNode = Symbol('ignoredNode');
 
 let shouldTransform = false;
 
-// returns t.memberExpression but marked to be ignored when visited
-function getIgnoredMemberExpression(object, property, computed) {
-  let node = t.memberExpression(object, property, computed);
-  node[ignoredNode] = true;
-  return node;
-}
+const makeIgnored = (nodeFunction) => {
+  return (...args) => {
+    let node = nodeFunction(...args);
+    node[ignoredNode] = true;
+    return node;
+  };
+};
+
+const getIgnoredMemberExpression = makeIgnored(t.memberExpression);
+const getIgnoredCallExpression = makeIgnored(t.callExpression);
 
 // var safeGetItem = require('../lib/safe_get.js').safeGetItem;
-function generateRequire(method, safeGetFilePath) {
+const generateRequire = (method, safeGetFilePath) => {
   return t.variableDeclaration(
     'var',
     [
       t.variableDeclarator(
         t.identifier(method),
         getIgnoredMemberExpression(
-          t.callExpression(
+          getIgnoredCallExpression(
             t.identifier('require'),
             [
               t.stringLiteral(safeGetFilePath)
@@ -35,7 +39,7 @@ function generateRequire(method, safeGetFilePath) {
 
 // safeGetItem(object, 'property');
 // safeGetAttr(object, 'property');
-function generateSafeGetCall(object, property, computed) {
+const generateSafeGetCall = (object, property, computed) => {
   let functionName;
   let propertyNode;
   if (computed) {
@@ -46,7 +50,7 @@ function generateSafeGetCall(object, property, computed) {
     propertyNode = t.stringLiteral(property.name);
   }
 
-  return t.callExpression(
+  return getIgnoredCallExpression(
     t.identifier(functionName),
     [
       object,
@@ -55,7 +59,7 @@ function generateSafeGetCall(object, property, computed) {
   );
 };
 
-function splitMultipleDirectives(directive) {
+const splitMultipleDirectives = (directive) => {
   if (!directive.startsWith('use ')) {
     return [];
   }
@@ -63,7 +67,7 @@ function splitMultipleDirectives(directive) {
   return directive.slice(4) // ommit 'use '
     .split(',')
     .map((directive) => directive.trim());
-}
+};
 
 export default function() {
   return {
@@ -123,7 +127,7 @@ export default function() {
           UnaryExpression(path) {
             if (!shouldTransform) { return; }
             if (['++', '--', '+', '-', '~'].indexOf(path.node.operator) !== -1) {
-              path.replaceWith(t.callExpression(
+              path.replaceWith(getIgnoredCallExpression(
                 t.identifier('__superstrictCheckCastingUnaryPrefix__'),
                 [
                   path.node.argument,
@@ -137,7 +141,7 @@ export default function() {
             const {node, node: {argument, operator, prefix}} = path;
 
             if (prefix) {
-              path.replaceWith(t.callExpression(
+              path.replaceWith(getIgnoredCallExpression(
                 t.identifier('__superstrictCheckCastingUnaryPrefix__'),
                 [
                   argument,
@@ -145,7 +149,7 @@ export default function() {
                 ]
               ));
             } else { // postfix increment/decrement
-              let checkedExpression = t.callExpression(
+              let checkedExpression = getIgnoredCallExpression(
                 t.identifier('__superstrictCheckCastingUnaryPostfix__'),
                 [
                   argument, // original value to determine type
@@ -173,7 +177,7 @@ export default function() {
             if (['+', '-', '*', '/', '%', '<', '>', '<=', '>=',
                  '<<', '>>', '>>>', '&', '^', '|']
               .indexOf(operator) !== -1) {
-              path.replaceWith(t.callExpression(
+              path.replaceWith(getIgnoredCallExpression(
                 t.identifier('__superstrictCheckCastingBinary__'),
                 [
                   left, // object
