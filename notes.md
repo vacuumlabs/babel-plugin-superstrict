@@ -1,11 +1,11 @@
 ## Co by bolo este fajn na plugine spravit
 
-- bolo by fajn, keby platilo, ze kod, ktory beha v superstricte sa moze v produkcii pouzit bez tohto
+- (done) bolo by fajn, keby platilo, ze kod, ktory beha v superstricte sa moze v produkcii pouzit bez tohto
   pluginu. Inymi slovami, chceme iba zakazovat niektore typy spravani ale nie menit existujuce. Z
   tohto vyplyva, ze chceme dropnut preklad 'in'. Za toto sa ospravedlnujem, povodne som si myslel ze
   to bude strasne cool, teraz sa mi ale skor javi, ze to nestoji za to.
 
-- k bodu vyssie, je este nieco, kde menime semantiku? Som si vedomy toho, ze pri resolvovani `.` a
+- (done) k bodu vyssie, je este nieco, kde menime semantiku? Som si vedomy toho, ze pri resolvovani `.` a
   `[]` robime binding this (taky, ako by jeden cakal), s tym asi treba zit. Menime este nieco?
 
 - (minor) namiesto `in` by sme mohli povolit:
@@ -16,7 +16,7 @@
   (pricom na attribute access moze byt pouzite . alebo [], moze byt pouzite == alebo === a null moze
   byt vlavo alebo vpravo rovnosti)
 
-- naming. Mohli by sme zaviest python-like mangling name convention, teda, vsetky nase metody a
+- (done) naming. Mohli by sme zaviest python-like mangling name convention, teda, vsetky nase metody a
   symboly by sa mohli volat `_superstrict__${name}`. Toto je hlavne s cielom vyhnut sa name
   koliziam, ktore nam dnes hrozia (napr. ak si user pomenuje svoju funkciu `safeGetItem`, mame
   problem.
@@ -36,7 +36,7 @@
   viacerych suborov (teda, otestovat require).
 
 - checkovanie poctu argumentov funkcii. Toto je (dufam) jedina big feature co si myslim ze by sme
-  este chceli. 
+  este chceli.
 
 ## Checkovanie poctu argumentov funkcii
 

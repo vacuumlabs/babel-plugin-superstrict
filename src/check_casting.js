@@ -212,6 +212,6 @@ const checkCastingUnaryPostfix = (originalOperand, operand, operator) => {
                           // incremnet/decrement it
 };
 
-exports.checkCastingBinary = checkInvalidValues(checkCastingBinary);
-exports.checkCastingUnaryPrefix = checkInvalidValues(checkCastingUnaryPrefix);
-exports.checkCastingUnaryPostfix = checkInvalidValues(checkCastingUnaryPostfix);
+exports.__superstrictCheckCastingBinary__ = checkInvalidValues(checkCastingBinary);
+exports.__superstrictCheckCastingUnaryPrefix__ = checkInvalidValues(checkCastingUnaryPrefix);
+exports.__superstrictCheckCastingUnaryPostfix__ = checkInvalidValues(checkCastingUnaryPostfix);
