@@ -5,7 +5,13 @@ export default function babelify(sourceFileName) {
     babelrc: false,
     presets: ['es2015'],
     plugins: [
-      ['../../lib', { 'directivePolicy': 'optin' }]
+      [
+        '../../lib',
+        {
+          'directivePolicy': 'optin',
+          'superstrictRuntime': '../lib/superstrict_runtime.js'
+        }
+      ]
     ]
   }).code;
 }
